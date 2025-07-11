@@ -1,0 +1,46 @@
+-- Game ID check
+local allowedGameId = 107892466314467  -- Replace this with the correct PlaceId or GameId
+
+if game.GameId ~= allowedGameId then
+    warn("This script is not for this game. Exiting...")
+    return
+end
+
+-- Load UI only if in the correct game
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zxciaz/VenyxUI/main/Reuploaded"))() 
+local venyx = library.new("Sell Crypto", 5013109572)
+
+-- Create page and section
+local page = venyx:addPage("Sell Crypto", 5012544693)
+local section = page:addSection("Sell Section")
+
+-- Info message as button (fake label)
+section:addButton("You must have crypto in your inventory for it to work.", function() end)
+
+-- Variable to hold sell amount
+local sellAmount = 1
+
+-- Textbox for user input
+section:addTextbox("Sell Amount", "1", function(value, focusLost)
+    if focusLost then
+        local num = tonumber(value)
+        if num and num > 0 then
+            sellAmount = math.floor(num)
+            print("Sell amount set to:", sellAmount)
+        else
+            print("Invalid input. Please enter a positive number.")
+        end
+    end
+end)
+
+-- Sell button
+section:addButton("Sell Crypto", function()
+    local args = {"Crypto_1"}
+    for i = 1, sellAmount do
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Events"):WaitForChild("SellCrypto"):FireServer(unpack(args))
+    end
+    print("Sold Crypto_1", sellAmount, "times")
+end)
+
+-- Load default page
+venyx:SelectPage(page, true)
